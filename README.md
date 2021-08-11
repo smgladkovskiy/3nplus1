@@ -14,15 +14,38 @@ As a result, the program displays:
 
 1. number it reached in the iteration
 2. time it took to iterate
-3. the maximum number of steps for iteration
+3. an amount of numbers in all iterations
 4. the largest number that was reached during the iteration
+5. ten most used while iterating numbers
+
+## How to run
+
+To run iterations to the number 10 with defined power, run:
+
+    make run MAXIPOWER=6
+
+To make run with profiling, use make command `run_profiled`.
+
+To investigate profiling data run:
+
+    make profile_cpu
+
+or
+
+    make profile_mem
+
+for CPU or Memory profiling.
 
 ## Current results
 
-As for now, algorithm counts numbers on 6 cores Intel Core i7
+As for now, algorithm counts numbers on 6 cores Intel Core i7 macbook pro:
 
-* from 1 to 10e6 in about 40-50 seconds
-* from 1 to 10e7 in about 8 minutes
-* from 10e7 to 10e8 already more than hour...
+* from 1 to 10e6 in about 1-2 seconds
+* from 1 to 10e7 in about 10-13 seconds
+* from 1 to 10e8 in about 1m50s-2m10s
+* from 1 to 10e9 in about 17-18 minutes
+* from 1 to 10e10 already more than 3 hours...
 
-Trying to optimize...
+it optimized to run from the beginning (1) to the end. So, iterating from 10e7 to 10e8 takes more than hour instead of couple minutes.
+
+Trying to optimize it more...

@@ -3,3 +3,5 @@ vendor
 *.prof
 main
 bin
+linter.mk
+.golangci*.yml
