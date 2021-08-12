@@ -16,7 +16,7 @@ As a result, the program displays:
 2. time it took to iterate
 3. an amount of numbers in all iterations
 4. the largest number that was reached during the iteration
-5. ten most used while iterating numbers
+5. ~~ten most used while iterating numbers~~ (too much time to wait this data)
 
 ## How to run
 
@@ -42,9 +42,9 @@ As for now, algorithm counts numbers on 6 cores Intel Core i7 macbook pro:
 
 * from 1 to 10e6 in about 1-2 seconds
 * from 1 to 10e7 in about 10-13 seconds
-* from 1 to 10e8 in about 1m50s-2m10s
-* from 1 to 10e9 in about 17-18 minutes
-* from 1 to 10e10 already more than 3 hours...
+* from 1 to 10e8 in about 1m50s-2m30s
+* from 1 to 10e9 in about an hour o so
+* from 1 to 10e10 already more than I can wait :)...
 
 it optimized to run from the beginning (1) to the end. So, iterating from 10e7 to 10e8 takes more than hour instead of couple minutes.
 

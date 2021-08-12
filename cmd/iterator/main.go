@@ -6,7 +6,6 @@ import (
 	"log"
 	"math"
 	"runtime"
-	"strings"
 	"time"
 
 	"github.com/marusama/semaphore/v2"
@@ -41,13 +40,15 @@ func main() {
 		for i := int64(1); i <= maxI; i++ {
 			_ = sem.Acquire(ctx, 1)
 
-			s := models.Sequence{InitialNumber: i, Steps: 0, CurrentNumber: i, Numbers: []int64{i}}
-			go s.Iterate(&iteratedNumbers, res)
+			go func() {
+				s := models.Sequence{InitialNumber: i, Steps: 0, CurrentNumber: i, Numbers: []int64{i}}
+				s.Iterate(&iteratedNumbers, res)
+			}()
 		}
 	}()
 
 	for s := range res {
-		iteratedNumbers.AddNumbers(s.Numbers)
+		go iteratedNumbers.AddNumbers(s.Numbers)
 
 		if mn.MaxNumber < s.MaxNumber {
 			mn.MaxNumber = s.MaxNumber
@@ -70,15 +71,16 @@ func main() {
 
 	endTime := time.Since(t).String()
 
+	memProfile()
+
+	log.Println("Iterations are done. Preparing results...")
+
 	log.Printf(
-		"max number: %d\ntime: %s\nnumbers in all iterations %d\nmax reached value for number %d is %d\nten most used numbers: %s\n",
+		"Results:\nmax number: %d\ntime: %s\nnumbers in all iterations %d\nmax reached value for number %d is %d\n",
 		n,
 		endTime,
 		iteratedNumbers.Numbers.Size(),
 		mn.Number,
 		mn.MaxNumber,
-		strings.Join(iteratedNumbers.GetMostUsedNumbers(10), ", "),
 	)
-
-	memProfile()
 }
