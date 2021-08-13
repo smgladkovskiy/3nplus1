@@ -4,13 +4,13 @@ deps:
 	go mod vendor
 
 build:
-	go build -o ./bin/iterator ./cmd/iterator
+	go build -o ./bin/collatz main.go
 
-run: deps build
-	./bin/iterator -maxIPower $(MAXIPOWER)
+run_iterator: deps build
+	./bin/collatz iterator --max-power $(MAXIPOWER)
 
-run_profiled: deps build
-	./bin/iterator -maxIPower $(MAXIPOWER) -cpuprofile cpu.prof -memprofile mem.prof
+run_iterator_profiled: deps build
+	./bin/collatz iterator --profile-cpu --profile-memory --max-power $(MAXIPOWER)
 
 profile_cpu:
 	go tool pprof -http=localhost:8080 cpu.prof

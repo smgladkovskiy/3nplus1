@@ -22,9 +22,13 @@ As a result, the program displays:
 
 To run iterations to the number 10 with defined power, run:
 
-    make run MAXIPOWER=6
+    make run_iterator MAXIPOWER=6
 
-To make run with profiling, use make command `run_profiled`.
+or with `go run`:
+
+    go run main.go iterator --max-power 6
+
+To make run with profiling, use make command `run_iterator_profiled`.
 
 To investigate profiling data run:
 
@@ -40,7 +44,7 @@ for CPU or Memory profiling.
 
 As for now, algorithm counts numbers on 6 cores Intel Core i7 macbook pro:
 
-* from 1 to 10e6 in about 1-2 seconds
+* from 1 to 10e6 in about 0.9-2 seconds
 * from 1 to 10e7 in about 10-13 seconds
 * from 1 to 10e8 in about 1m50s-2m30s
 * from 1 to 10e9 in about an hour o so
