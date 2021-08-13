@@ -9,7 +9,8 @@ import (
 	"time"
 
 	"github.com/marusama/semaphore/v2"
-	"github.com/smgladkovskiy/3nplus1/models"
+	"github.com/smgladkovskiy/3nplus1/pkg"
+	"github.com/smgladkovskiy/3nplus1/pkg/inmemory"
 )
 
 func main() {
@@ -19,14 +20,16 @@ func main() {
 	var (
 		n               int64
 		x               = int64(1)
-		mn              = models.SeqResult{}
+		mn              = newSequenceResult()
 		t               = time.Now()
 		maxI            = int64(math.Pow10(*maxIPower))
-		res             = make(chan models.Sequence)
+		res             = make(chan pkg.SequenceResultInterface)
 		semConcurrent   = runtime.NumCPU() * 4
 		sem             = semaphore.New(semConcurrent)
-		iteratedNumbers = models.NewAllIteratedNumbers(maxI)
+		iteratedNumbers pkg.NumbersStorageInterface
 	)
+
+	iteratedNumbers = inmemory.NewAllIteratedNumbers(maxI)
 
 	runtime.GOMAXPROCS(semConcurrent)
 
@@ -37,27 +40,24 @@ func main() {
 	ctx := context.Background()
 
 	go func() {
+		seq := inmemory.NewSequence(iteratedNumbers, res)
+
 		for i := int64(1); i <= maxI; i++ {
 			_ = sem.Acquire(ctx, 1)
 
-			go func() {
-				s := models.Sequence{InitialNumber: i, Steps: 0, CurrentNumber: i, Numbers: []int64{i}}
-				s.Iterate(&iteratedNumbers, res)
-			}()
+			go seq.RunForNumber(i)
 		}
 	}()
 
 	for s := range res {
-		go iteratedNumbers.AddNumbers(s.Numbers)
+		go iteratedNumbers.AddNumbers(s.GetNumbers())
 
-		if mn.MaxNumber < s.MaxNumber {
-			mn.MaxNumber = s.MaxNumber
-			mn.Number = s.InitialNumber
-			mn.Steps = s.Steps
+		if mn.GetMaxNumber() < s.GetMaxNumber() {
+			mn = s
 		}
 
-		if n < s.InitialNumber {
-			n = s.InitialNumber
+		if n < s.GetInitialNumber() {
+			n = s.GetInitialNumber()
 		}
 
 		if x == maxI {
@@ -79,8 +79,12 @@ func main() {
 		"Results:\nmax number: %d\ntime: %s\nnumbers in all iterations %d\nmax reached value for number %d is %d\n",
 		n,
 		endTime,
-		iteratedNumbers.Numbers.Size(),
-		mn.Number,
-		mn.MaxNumber,
+		iteratedNumbers.Amount(),
+		mn.GetInitialNumber(),
+		mn.GetMaxNumber(),
 	)
+}
+
+func newSequenceResult() pkg.SequenceResultInterface {
+	return &pkg.SequenceResult{}
 }
