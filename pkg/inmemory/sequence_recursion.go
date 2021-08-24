@@ -4,19 +4,19 @@ import (
 	"github.com/smgladkovskiy/3nplus1/pkg"
 )
 
-type Sequence struct {
+type RecursionSequence struct {
 	numbersStorage pkg.NumbersStorageInterface
 	resultsChan    chan pkg.SequenceResultInterface
 }
 
-func NewSequence(iNumbers pkg.NumbersStorageInterface, res chan pkg.SequenceResultInterface) pkg.SequenceInterface {
-	return &Sequence{
+func NewSequenceRecursion(iNumbers pkg.NumbersStorageInterface, res chan pkg.SequenceResultInterface) pkg.SequenceInterface {
+	return &RecursionSequence{
 		numbersStorage: iNumbers,
 		resultsChan:    res,
 	}
 }
 
-func (s *Sequence) RunForNumber(i int64) {
+func (s *RecursionSequence) RunForNumber(i int64) {
 	sr := &pkg.SequenceResult{
 		InitialNumber: i,
 		CurrentNumber: i,
@@ -25,7 +25,7 @@ func (s *Sequence) RunForNumber(i int64) {
 	s.resultsChan <- s.CollatzSequence(sr)
 }
 
-func (s *Sequence) CollatzSequence(sr pkg.SequenceResultInterface) pkg.SequenceResultInterface {
+func (s *RecursionSequence) CollatzSequence(sr pkg.SequenceResultInterface) pkg.SequenceResultInterface {
 	sr.CollatzIteration()
 
 	if sr.IsEnd() || s.AlreadyCounted(sr) {
@@ -35,6 +35,6 @@ func (s *Sequence) CollatzSequence(sr pkg.SequenceResultInterface) pkg.SequenceR
 	return s.CollatzSequence(sr)
 }
 
-func (s *Sequence) AlreadyCounted(sr pkg.SequenceResultInterface) bool {
+func (s *RecursionSequence) AlreadyCounted(sr pkg.SequenceResultInterface) bool {
 	return s.numbersStorage.InMap(sr.GetCurrentNumber())
 }

@@ -36,12 +36,19 @@ func runIterator(_ *cobra.Command, _ []string) {
 
 	defer close(res)
 
-	log.Printf("Lets iterate numbers from 1 to 10e%d in %d parallel processes\n", maxIPower, semConcurrent)
+	log.Printf("Lets iterate numbers with %s from 1 to 10e%d in %d parallel processes\n", approach, maxIPower, semConcurrent)
 
 	ctx := context.Background()
 
 	go func() {
-		seq := inmemory.NewSequence(iteratedNumbers, res)
+		var seq pkg.SequenceInterface
+
+		switch approach {
+		case "recursion":
+			seq = inmemory.NewSequenceRecursion(iteratedNumbers, res)
+		case "cycle":
+			seq = inmemory.NewSequenceWithCycle(iteratedNumbers, res)
+		}
 
 		for i := int64(1); i <= maxI; i++ {
 			_ = sem.Acquire(ctx, 1)
